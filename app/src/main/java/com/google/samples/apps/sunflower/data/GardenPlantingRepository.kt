@@ -18,12 +18,12 @@ package com.google.samples.apps.sunflower.data
 
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
 
 @Singleton
 class GardenPlantingRepository @Inject constructor(
     private val gardenPlantingDao: GardenPlantingDao
 ) {
-
     suspend fun createGardenPlanting(plantId: String) {
         val gardenPlanting = GardenPlanting(plantId)
         gardenPlantingDao.insertGardenPlanting(gardenPlanting)
@@ -36,5 +36,9 @@ class GardenPlantingRepository @Inject constructor(
     fun isPlanted(plantId: String) =
         gardenPlantingDao.isPlanted(plantId)
 
-    fun getPlantedGardens() = gardenPlantingDao.getPlantedGardens()
+    fun getPlantedGardens(): Flow<List<PlantAndGardenPlantings>> = gardenPlantingDao.getPlantedGardens()
+
+    suspend fun removeGardenPlantingsForPlant(plantId: String) {
+        gardenPlantingDao.deleteGardenPlantingsForPlant(plantId)
+    }
 }

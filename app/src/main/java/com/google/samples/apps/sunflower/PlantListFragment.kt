@@ -16,37 +16,49 @@
 
 package com.google.samples.apps.sunflower
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
+import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.IdRes
+import androidx.appcompat.widget.Toolbar
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.observe
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
+import com.google.android.material.badge.BadgeDrawable
+import com.google.android.material.badge.BadgeUtils
 import com.google.samples.apps.sunflower.adapters.PlantAdapter
 import com.google.samples.apps.sunflower.databinding.FragmentPlantListBinding
 import com.google.samples.apps.sunflower.viewmodels.PlantListViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.lang.ref.WeakReference
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
+import timber.log.Timber
 
 @AndroidEntryPoint
 class PlantListFragment : Fragment() {
 
-    private val viewModel: PlantListViewModel by viewModels()
+    private val viewModel: PlantListViewModel by activityViewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = FragmentPlantListBinding.inflate(inflater, container, false)
         context ?: return binding.root
 
         val adapter = PlantAdapter()
         binding.plantList.adapter = adapter
         subscribeUi(adapter)
+
+        binding.etSearch.addTextChangedListener { editable ->
+            viewModel.search(editable?.toString().orEmpty())
+        }
 
         setHasOptionsMenu(true)
         return binding.root
@@ -58,8 +70,8 @@ class PlantListFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.filter_zone -> {
-                updateData()
+            R.id.action_show_filters -> {
+                showFiltersDialog()
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -72,13 +84,7 @@ class PlantListFragment : Fragment() {
         }
     }
 
-    private fun updateData() {
-        with(viewModel) {
-            if (isFiltered()) {
-                clearGrowZoneNumber()
-            } else {
-                setGrowZoneNumber(9)
-            }
-        }
+    private fun showFiltersDialog() {
+        findNavController().navigate(R.id.filters_dialog)
     }
 }

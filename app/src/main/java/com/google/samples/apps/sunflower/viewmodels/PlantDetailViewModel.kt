@@ -22,11 +22,14 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.samples.apps.sunflower.BuildConfig
 import com.google.samples.apps.sunflower.PlantDetailFragment
+import com.google.samples.apps.sunflower.data.GardenPlanting
 import com.google.samples.apps.sunflower.data.GardenPlantingRepository
 import com.google.samples.apps.sunflower.data.PlantRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.toList
 
 /**
  * The ViewModel used in [PlantDetailFragment].
@@ -46,6 +49,12 @@ class PlantDetailViewModel @Inject constructor(
     fun addPlantToGarden() {
         viewModelScope.launch {
             gardenPlantingRepository.createGardenPlanting(plantId)
+        }
+    }
+
+    fun removePlantFromGarden() {
+        viewModelScope.launch {
+            gardenPlantingRepository.removeGardenPlantingsForPlant(plantId)
         }
     }
 

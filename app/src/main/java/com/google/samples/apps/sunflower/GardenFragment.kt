@@ -32,8 +32,6 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class GardenFragment : Fragment() {
 
-    private lateinit var binding: FragmentGardenBinding
-
     private val viewModel: GardenPlantingListViewModel by viewModels()
 
     override fun onCreateView(
@@ -41,7 +39,7 @@ class GardenFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentGardenBinding.inflate(inflater, container, false)
+        val binding = FragmentGardenBinding.inflate(inflater, container, false)
         val adapter = GardenPlantingAdapter()
         binding.gardenList.adapter = adapter
 
@@ -65,7 +63,6 @@ class GardenFragment : Fragment() {
 
     // TODO: convert to data binding if applicable
     private fun navigateToPlantListPage() {
-        requireActivity().findViewById<ViewPager2>(R.id.view_pager).currentItem =
-            PLANT_LIST_PAGE_INDEX
+        requireActivity().findViewById<ViewPager2>(R.id.view_pager).currentItem = PLANT_LIST_PAGE_INDEX
     }
 }

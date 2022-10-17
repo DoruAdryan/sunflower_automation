@@ -30,12 +30,30 @@ interface PlantDao {
     @Query("SELECT * FROM plants ORDER BY name")
     fun getPlants(): Flow<List<Plant>>
 
-    @Query("SELECT * FROM plants WHERE growZoneNumber = :growZoneNumber ORDER BY name")
-    fun getPlantsWithGrowZoneNumber(growZoneNumber: Int): Flow<List<Plant>>
+    @Query("SELECT * FROM plants WHERE name LIKE '%' || :plantName || '%' ORDER BY name")
+    fun getPlantsWithName(plantName: String): Flow<List<Plant>>
+
+    @Query("SELECT * FROM plants WHERE type IN (:plantTypes) ORDER BY name")
+    fun getPlantsWithTypes(plantTypes: Collection<String>): Flow<List<Plant>>
+
+    @Query("SELECT * FROM plants WHERE name LIKE '%' || :plantName || '%' AND type IN (:plantTypes) ORDER BY name")
+    fun getPlantsWithNameAndType(plantName: String, plantTypes: Collection<String>): Flow<List<Plant>>
 
     @Query("SELECT * FROM plants WHERE id = :plantId")
     fun getPlant(plantId: String): Flow<Plant>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(plants: List<Plant>)
+
+    /**
+     * Used for pre-population from background (IO) thread.
+     */
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertAllUnsuspended(plants: List<Plant>)
+
+    companion object {
+        private const val QUERY_PLANTS_WITH_NAME_AND_TYPE = """
+            SELECT * FROM plants 
+        """
+    }
 }

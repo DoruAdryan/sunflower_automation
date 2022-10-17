@@ -20,6 +20,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.ContentLoadingProgressBar
+import androidx.databinding.BindingAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -32,6 +34,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @AndroidEntryPoint
 class GalleryFragment : Fragment() {
@@ -41,16 +44,14 @@ class GalleryFragment : Fragment() {
     private var searchJob: Job? = null
     private val viewModel: GalleryViewModel by viewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val binding = FragmentGalleryBinding.inflate(inflater, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val binding = FragmentGalleryBinding.inflate(inflater, container, false).also {
+            it.lifecycleOwner = viewLifecycleOwner
+        }
         context ?: return binding.root
 
         binding.photoList.adapter = adapter
-        search(args.plantName)
+        search(args.plantName, binding)
 
         binding.toolbar.setNavigationOnClickListener { view ->
             view.findNavController().navigateUp()
@@ -59,13 +60,31 @@ class GalleryFragment : Fragment() {
         return binding.root
     }
 
-    private fun search(query: String) {
+    private fun search(query: String, binding: FragmentGalleryBinding) {
         // Make sure we cancel the previous job before creating a new one
         searchJob?.cancel()
         searchJob = lifecycleScope.launch {
+            Timber.d("search launch called")
+            binding.isLoading = true
+            binding.executePendingBindings()
+
             viewModel.searchPictures(query).collectLatest {
+                Timber.d("searchPictures collectLatest")
+                binding.isLoading = false
+                binding.executePendingBindings()
+
                 adapter.submitData(it)
             }
         }
+    }
+}
+
+@BindingAdapter("show")
+fun showContentLoadingProgress(view: ContentLoadingProgressBar, shouldShow: Boolean) {
+    Timber.d("showContentLoadingProgress called with shouldShow:$shouldShow")
+    if (shouldShow) {
+        view.show()
+    } else {
+        view.hide()
     }
 }

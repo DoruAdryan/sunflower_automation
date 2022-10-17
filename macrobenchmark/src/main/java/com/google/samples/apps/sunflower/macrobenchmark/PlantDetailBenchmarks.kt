@@ -23,6 +23,7 @@ import androidx.benchmark.macro.StartupMode
 import androidx.benchmark.macro.junit4.MacrobenchmarkRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.uiautomator.By
+import androidx.test.uiautomator.BySelector
 import androidx.test.uiautomator.Until
 import org.junit.Rule
 import org.junit.Test
@@ -59,7 +60,7 @@ class PlantDetailBenchmarks {
 }
 
 fun MacrobenchmarkScope.goToPlantDetail(index: Int? = null) {
-    val plantListSelector = By.res(packageName, "plant_list")
+    val plantListSelector: BySelector = By.res(packageName, "plant_list")
     val recycler = device.findObject(plantListSelector)
 
     // select different item each iteration, but only from the visible ones

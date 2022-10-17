@@ -26,19 +26,49 @@
         <item name="colorSurface">@color/sunflower_gray_50</item>
         <item name="colorSecondary">@color/sunflower_yellow_500</item>
         <item name="android:colorBackground">@color/sunflower_green_500</item>
+
+        <item name="bottomSheetStyle">@style/Widget.MaterialComponents.BottomSheet</item>
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.Sunflower.BottomSheetDialog</item>
+
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.Sunflower.LargeComponent</item>
     </style>
 
-    <style name="Theme.Sunflower" parent="Base.Theme.Sunflower"/>
+    <style name="Theme.Sunflower" parent="Base.Theme.Sunflower" />
 
     <style name="Theme.Sunflower.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="Theme.Sunflower.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar"/>
+    <style name="Theme.Sunflower.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar" />
 
-    <style name="TextAppearance.Sunflower.Toolbar.Text" parent="TextAppearance.MaterialComponents.Headline5" >
+    <style name="ShapeAppearance.Sunflower.LargeComponent" parent="ShapeAppearance.MaterialComponents.LargeComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">24dp</item>
+    </style>
+
+    <style name="TextAppearance.Sunflower.Toolbar.Text" parent="TextAppearance.MaterialComponents.Headline5">
         <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="ThemeOverlay.Sunflower.BottomSheetDialog" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/Widget.Sunflower.BottomSheet</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
+
+    <style name="Widget.Sunflower.BottomSheet" parent="Widget.MaterialComponents.BottomSheet.Modal">
+        <item name="backgroundTint">@color/sunflower_green_500</item>
+        <item name="colorPrimary">@color/sunflower_green_500</item>
+        <item name="colorSecondary">@color/sunflower_yellow_500</item>
+        <item name="colorAccent">@color/sunflower_green_700</item>
+
+        <item name="shapeAppearance">?shapeAppearanceLargeComponent</item>
+    </style>
+
+    <!-- Check for usages in xml/standalone_badge before refactoring (rename / delete) this -->
+    <style name="Widget.Sunflower.Badge" parent="Widget.MaterialComponents.Badge">
+        <item name="backgroundColor">?colorSecondary</item>
+        <item name="badgeTextColor">?colorPrimaryDark</item>
     </style>
 
 </resources>

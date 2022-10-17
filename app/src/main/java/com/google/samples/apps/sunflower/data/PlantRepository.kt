@@ -18,6 +18,7 @@ package com.google.samples.apps.sunflower.data
 
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Repository module for handling data operations.
@@ -32,6 +33,17 @@ class PlantRepository @Inject constructor(private val plantDao: PlantDao) {
 
     fun getPlant(plantId: String) = plantDao.getPlant(plantId)
 
-    fun getPlantsWithGrowZoneNumber(growZoneNumber: Int) =
-        plantDao.getPlantsWithGrowZoneNumber(growZoneNumber)
+    fun getPlantsWithName(plantName: String): Flow<List<Plant>> =
+        plantDao.getPlantsWithName(plantName)
+
+    fun getPlantsWithTypes(types: Collection<String>): Flow<List<Plant>> {
+        require(types.isNotEmpty())
+        return plantDao.getPlantsWithTypes(types)
+    }
+
+    fun getPlantsWithNameAndType(plantName: String, types: Collection<String>): Flow<List<Plant>> {
+        require(plantName.isNotEmpty())
+        require(types.isNotEmpty())
+        return plantDao.getPlantsWithNameAndType(plantName, types)
+    }
 }

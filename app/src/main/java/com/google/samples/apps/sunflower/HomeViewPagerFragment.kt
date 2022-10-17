@@ -22,21 +22,25 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.samples.apps.sunflower.adapters.MY_GARDEN_PAGE_INDEX
 import com.google.samples.apps.sunflower.adapters.PLANT_LIST_PAGE_INDEX
 import com.google.samples.apps.sunflower.adapters.SunflowerPagerAdapter
 import com.google.samples.apps.sunflower.databinding.FragmentViewPagerBinding
+import com.google.samples.apps.sunflower.utils.DefaultToolbarBadgesDelegate
+import com.google.samples.apps.sunflower.utils.ToolbarBadgesDelegate
+import com.google.samples.apps.sunflower.utils.showOrHideBadgeUsingCountForMenuItem
+import com.google.samples.apps.sunflower.viewmodels.PlantListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class HomeViewPagerFragment : Fragment() {
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    private val plantListViewModel: PlantListViewModel by activityViewModels()
+    private lateinit var toolbarDelegate: ToolbarBadgesDelegate
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = FragmentViewPagerBinding.inflate(inflater, container, false)
         val tabLayout = binding.tabs
         val viewPager = binding.viewPager
@@ -50,6 +54,12 @@ class HomeViewPagerFragment : Fragment() {
         }.attach()
 
         (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
+
+        toolbarDelegate = DefaultToolbarBadgesDelegate(binding.toolbar)
+
+        plantListViewModel.activeFiltersCount.observe(viewLifecycleOwner) { count ->
+            toolbarDelegate.showOrHideBadgeUsingCountForMenuItem(R.id.action_show_filters, count)
+        }
 
         return binding.root
     }
